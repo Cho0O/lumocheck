@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>So新闻</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            background-color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 600px;
+        }
+
+        /* 主容器，居中显示 */
+        .home-container {
+            text-align: center;
+            width: 650px;
+            margin-top: -80px; /* 稍微向上偏移，视觉更舒适 */
+        }
+
+        /* 百度 Logo 样式 */
+        .baidu-logo {
+            margin-bottom: 25px;
+        }
+
+        .logo-img {
+            /* 这里用纯文本模拟百度 Logo，也可以替换为真实的图片 */
+            font-size: 60px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 1;
+        }
+
+        .logo-blue {
+            color: #4e6ef2;
+        }
+
+        .logo-red {
+            color: #de4824;
+        }
+
+        /* 如果是真实图片可取消注释此处 */
+        /*
+        .logo-img img {
+            width: 270px;
+            height: 129px;
+        }
+        */
+
+        /* 搜索框 + 按钮组合 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 2px solid #4e6ef2;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 48px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 0 18px;
+            font-size: 16px;
+            color: #333;
+            background: #fff;
+        }
+
+        .search-btn {
+            width: 110px;
+            height: 100%;
+            background-color: #4e6ef2;
+            color: white;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: background 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #3b5bdb;
+        }
+
+        /* 响应式微调 */
+        @media (max-width: 700px) {
+            .home-container {
+                width: 90%;
+            }
+            .logo-img {
+                font-size: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- 百度 Logo -->
+        <div class="baidu-logo">
+            <a href="#" class="logo-img">
+                <!-- 多色文字模拟百度 Logo -->
+                <span class="logo-blue">So</span><span class="logo-red">新闻</span>
+            </a>
+   
+        </div>
+
+        <!-- 搜索框区域，预填关键词 -->
+        <div class="search-box">
+            <input type="text" class="search-input" value="世界不过SoSo" readonly>
+            <button class="search-btn">So一下</button>
+        </div>
+    </div>
+</body>
+</html>

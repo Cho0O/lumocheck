@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文鉴实习生 - 互动叙事游戏 v5.0</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --text: #e0e0e0;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            /* 邮箱风格变量 */
+            --mail-primary: #1a5c8a;
+            --mail-primary-hover: #1e6da8;
+            --mail-primary-light: #e8f2f9;
+            --mail-bg: #f2f5f9;
+            --mail-card-bg: #ffffff;
+            --mail-text-dark: #2c2c2c;
+            --mail-text-medium: #555555;
+            --mail-text-light: #888888;
+            --mail-text-muted: #aaaaaa;
+            --mail-border: #e0e4ea;
+            --mail-border-focus: #1a5c8a;
+            --mail-input-bg: #f8f9fb;
+            --mail-shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+            --mail-shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+            --mail-shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+            --mail-radius-sm: 6px;
+            --mail-radius-md: 10px;
+            --mail-radius-lg: 16px;
+            --mail-radius-xl: 20px;
+            --mail-transition-fast: 0.18s ease;
+            --mail-transition-normal: 0.25s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            background-image: radial-gradient(ellipse at 20% 20%, rgba(233, 68, 96, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(83, 52, 131, 0.06) 0%, transparent 60%);
+        }
+        .page {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .page.active {
+            display: block;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-bottom: 16px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
+        /* 初始介绍页 */
+        .intro-container {
+            text-align: center;
+            padding: 60px 30px;
+            max-width: 700px;
+            margin: 60px auto;
+            background: #1e2a3a;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid #2e3e52;
+        }
+        .intro-container .logo-icon { font-size: 64px; margin-bottom: 16px; }
+        .intro-container h1 { font-size: 2.2em; letter-spacing: 2px; color: #fff; }
+        .intro-container .subtitle { color: #e94560; font-size: 1.1em; margin-bottom: 24px; }
+        .intro-container .story-box {
+            background: #0f1a2b; border-radius: 12px; padding: 24px; text-align: left;
+            margin: 20px 0; border-left: 4px solid #e94560; color: #b0b8c4; line-height: 1.8;
+        }
+        .intro-container .story-box strong { color: #fff; }
+        .btn-enter {
+            display: inline-block; padding: 14px 40px; background: #e94560; color: #fff;
+            border: none; border-radius: 30px; font-size: 1.1em; cursor: pointer; text-decoration: none;
+            letter-spacing: 1px; font-weight: bold; transition: 0.3s; margin-top: 20px;
+        }
+        .btn-enter:hover { background: #ff5a7e; box-shadow: 0 8px 30px rgba(233, 68, 96, 0.4); transform: translateY(-2px); }
+
+        /* 浏览器收藏夹 */
+        .browser-frame {
+            background: #fff; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow);
+            max-width: 800px; margin: 30px auto; min-height: 500px; color: #333;
+        }
+        .browser-topbar {
+            background: #e8eaed; padding: 12px 16px; display: flex; align-items: center;
+            gap: 10px; border-bottom: 1px solid #d0d0d0;
+        }
+        .browser-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .browser-dot.red { background: #ff5f57; }
+        .browser-dot.yellow { background: #febc2e; }
+        .browser-dot.green { background: #28c840; }
+        .browser-urlbar {
+            flex: 1; background: #fff; border-radius: 20px; padding: 7px 16px;
+            font-size: 13px; color: #555; border: 1px solid #ddd; text-align: center;
+        }
+        .bookmarks-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+            padding: 40px; background: #f8f9fa;
+        }
+        @media (max-width: 700px) { .bookmarks-grid { grid-template-columns: repeat(2, 1fr); } }
+        .bookmark-card {
+            background: #fff; border-radius: 16px; padding: 24px 16px; text-align: center;
+            cursor: pointer; transition: all 0.25s; border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-decoration: none; color: #333;
+        }
+        .bookmark-card:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(0,0,0,0.12); border-color: #ccc; }
+        .bookmark-card .bm-icon { font-size: 44px; margin-bottom: 10px; display: block; }
+        .bookmark-card .bm-label { font-weight: 600; font-size: 14px; color: #444; }
+        .bookmark-card .bm-url { font-size: 11px; color: #999; margin-top: 4px; }
+
+        /* 聊天页 - 微信PC风格 */
+        .wechat-container {
+            display: flex; max-width: 820px; margin: 20px auto; background: #f5f5f5;
+            border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            height: 85vh; max-height: 700px; color: #333;
+        }
+        .chat-sidebar {
+            width: 220px; background: #e9e9e9; border-right: 1px solid #d6d6d6;
+            display: flex; flex-direction: column;
+        }
+        .chat-contacts { flex: 1; overflow-y: auto; list-style: none; }
+        .chat-contact {
+            padding: 12px 16px; cursor: pointer; display: flex; align-items: center;
+            gap: 10px; border-bottom: 1px solid #e0e0e0; transition: background 0.2s; font-size: 14px;
+        }
+        .chat-contact:hover { background: #dcdcdc; }
+        .chat-contact.active { background: #cbcbcb; font-weight: 600; }
+        .chat-avatar {
+            width: 36px; height: 36px; border-radius: 4px; background: #ccc;
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
+            color: #fff; font-weight: bold;
+        }
+        .chat-main { flex: 1; display: flex; flex-direction: column; background: #f0f0f0; }
+        .chat-main-header {
+            padding: 14px 20px; background: #ededed; border-bottom: 1px solid #d6d6d6;
+            font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 16px 20px; background: #f5f5f5;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .chat-msg-row { display: flex; flex-direction: column; max-width: 70%; margin-bottom: 4px; }
+        .chat-msg-row.sent { align-self: flex-end; align-items: flex-end; }
+        .chat-msg-row.received { align-self: flex-start; align-items: flex-start; }
+        .chat-msg-row .msg-bubble {
+            padding: 10px 14px; border-radius: 6px; font-size: 14px; line-height: 1.6;
+            word-break: break-word; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .chat-msg-row.sent .msg-bubble { background: #95ec69; }
+        .chat-msg-row.received .msg-bubble { background: #fff; }
+        .chat-msg-row .msg-sender { font-size: 11px; color: #888; margin-bottom: 3px; font-weight: 600; }
+        .chat-time-divider {
+            text-align: center; color: #999; font-size: 12px; margin: 12px 0 6px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .chat-time-divider::before, .chat-time-divider::after {
+            content: ''; flex: 1; height: 1px; background: #d0d0d0;
+        }
+        .chat-input-row {
+            display: flex; gap: 8px; padding: 8px 20px; background: #f0f0f0; border-top: 1px solid #e0e0e0;
+        }
+        .chat-input-row input {
+            flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;
+            font-size: 13px; background: #fff;
+        }
+        .chat-input-row button {
+            padding: 8px 16px; background: #e0e0e0; border: 1px solid #ccc; border-radius: 4px;
+            cursor: pointer; font-size: 13px;
+        }
+        .chat-link {
+            color: #576b95; text-decoration: underline; cursor: pointer;
+        }
+
+        /* ===== 邮箱页 - WW邮箱封面风格 ===== */
+        .qqmail-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: var(--mail-card-bg);
+            border-radius: var(--mail-radius-xl);
+            box-shadow: var(--mail-shadow-lg);
+            color: var(--mail-text-dark);
+            display: flex;
+            min-height: 600px;
+            overflow: hidden;
+            border: 1px solid #e8ecf2;
+            font-family: var(--font-sans);
+        }
+        .mail-sidebar {
+            width: 220px;
+            background: #f8fafc;
+            border-right: 1px solid var(--mail-border);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .mail-sidebar .sidebar-brand {
+            padding: 0 20px 16px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--mail-primary);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--mail-border);
+            margin-bottom: 8px;
+        }
+        .mail-sidebar .sidebar-brand .brand-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a5c8a 0%, #2878b5 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .mail-sidebar .mail-folder {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--mail-text-medium);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all var(--mail-transition-fast);
+            margin: 2px 8px;
+            border-radius: var(--mail-radius-md);
+            font-weight: 500;
+        }
+        .mail-sidebar .mail-folder:hover {
+            background: var(--mail-primary-light);
+            color: var(--mail-primary);
+        }
+        .mail-sidebar .mail-folder.active {
+            background: var(--mail-primary);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(26,92,138,0.3);
+        }
+        .mail-sidebar .logout-box {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--mail-border);
+            font-size: 13px;
+            color: #d93025;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background var(--mail-transition-fast);
+        }
+        .mail-sidebar .logout-box:hover {
+            background: #fff0f0;
+        }
+        .mail-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .mail-main-header {
+            padding: 16px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--mail-border);
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--mail-text-dark);
+            letter-spacing: 0.3px;
+        }
+        .mail-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .mail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .mail-table th {
+            background: #f8fafc;
+            padding: 12px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--mail-text-medium);
+            border-bottom: 2px solid var(--mail-border);
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+        .mail-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: middle;
+            color: var(--mail-text-dark);
+        }
+        .mail-table tr:hover td {
+            background: #f8fafc;
+        }
+        .mail-table .mail-from {
+            font-weight: 500;
+            color: var(--mail-text-dark);
+        }
+        .mail-table .mail-subject {
+            color: var(--mail-primary);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .mail-table .mail-subject:hover {
+            text-decoration: underline;
+            color: var(--mail-primary-hover);
+        }
+        .mail-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: #e8f2f9;
+            color: var(--mail-primary);
+            font-weight: 500;
+        }
+        .mail-badge.unread {
+            background: #fce8e6;
+            color: #d93025;
+        }
+        .mail-pagination {
+            padding: 12px 24px;
+            text-align: center;
+            border-top: 1px solid var(--mail-border);
+            font-size: 13px;
+            color: var(--mail-text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .mail-pagination .page-btn {
+            background: #fff;
+            border: 1px solid var(--mail-border);
+            color: var(--mail-text-medium);
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all var(--mail-transition-fast);
+        }
+        .mail-pagination .page-btn:hover {
+            background: var(--mail-primary-light);
+            border-color: var(--mail-primary);
+            color: var(--mail-primary);
+        }
+        .mail-pagination .page-btn.active {
+            background: var(--mail-primary);
+            color: #fff;
+            border-color: var(--mail-primary);
+            font-weight: 600;
+        }
+        .mail-pagination .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .mail-detail-panel {
+            display: none;
+            padding: 24px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            z-index: 5;
+            overflow-y: auto;
+            border-radius: 0 0 var(--mail-radius-xl) var(--mail-radius-xl);
+        }
+        .mail-detail-panel.active {
+            display: block;
+        }
+        /* 登录界面 (退出后) - 邮箱封面风格 */
+        .mail-login-full {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 500px;
+            background: var(--mail-bg);
+            border-radius: var(--mail-radius-xl);
+            padding: 40px;
+            box-shadow: var(--mail-shadow-lg);
+            font-family: var(--font-sans);
+            gap: 40px;
+        }
+        .mail-login-full .login-card {
+            background: var(--mail-card-bg);
+            border-radius: var(--mail-radius-xl);
+            padding: 36px 32px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.05);
+            border: 1px solid #e8ecf2;
+            width: 100%;
+            max-width: 420px;
+        }
+        .mail-login-full .login-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #eef1f6;
+        }
+        .mail-login-full .tab-btn {
+            flex: 1;
+            padding: 12px 16px 14px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--mail-text-muted);
+            letter-spacing: 0.3px;
+            transition: all var(--mail-transition-fast);
+            font-family: var(--font-sans);
+        }
+        .mail-login-full .tab-btn.active {
+            color: var(--mail-primary);
+        }
+        .mail-login-full .tab-btn.active::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: var(--mail-primary);
+            margin: 6px auto 0;
+            border-radius: 3px;
+        }
+        .mail-login-full .tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .mail-login-full .tab-panel.active {
+            display: flex;
+        }
+        .mail-login-full .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .mail-login-full .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--mail-text-medium);
+        }
+        .mail-login-full .input-wrapper {
+            position: relative;
+        }
+        .mail-login-full .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0b8c4;
+        }
+        .mail-login-full .input-wrapper input {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            border: 1.5px solid var(--mail-border);
+            border-radius: var(--mail-radius-md);
+            font-size: 15px;
+            font-family: var(--font-sans);
+            background: var(--mail-input-bg);
+            color: var(--mail-text-dark);
+            outline: none;
+            transition: all var(--mail-transition-fast);
+        }
+        .mail-login-full .input-wrapper input:focus {
+            border-color: var(--mail-border-focus);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(26,92,138,0.06);
+        }
+        .mail-login-full .options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .mail-login-full .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1a5c8a 0%, #1e6da8 100%);
+            color: #fff;
+            border: none;
+            border-radius: var(--mail-radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            font-family: var(--font-sans);
+            transition: all var(--mail-transition-normal);
+            box-shadow: 0 4px 14px rgba(26,92,138,0.25);
+        }
+        .mail-login-full .login-btn:hover {
+            background: linear-gradient(135deg, #1e6da8 0%, #247dc0 100%);
+            box-shadow: 0 6px 20px rgba(26,92,138,0.35);
+        }
+        .mail-detail-panel button {
+            background: none;
+            border: none;
+            color: var(--mail-primary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px 0;
+            margin-bottom: 16px;
+        }
+        .mail-detail-panel button:hover {
+            text-decoration: underline;
+        }
+
+        /* 密码可见切换按钮 */
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            color: #b0b8c4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--mail-transition-fast);
+            z-index: 2;
+        }
+        .toggle-password:hover {
+            color: var(--mail-text-medium);
+            background: #f0f2f5;
+        }
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        /* 左侧品牌展示区 */
+        .brand-section {
+            flex: 1 1 50%;
+            max-width: 560px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            padding-right: 20px;
+            animation: fadeInLeft 0.7s ease-out;
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .brand-section .brand-logo-large {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-section .brand-logo-large .logo-icon-lg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #1a5c8a 0%, #2878b5 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+            box-shadow: 0 8px 24px rgba(26, 92, 138, 0.25);
+        }
+        .brand-section .brand-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--mail-text-dark);
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+        .brand-section .brand-name span {
+            color: var(--mail-primary);
+        }
+        .brand-section .main-slogan {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--mail-text-dark);
+            letter-spacing: 0.8px;
+            line-height: 1.3;
+            margin-top: 4px;
+        }
+        .brand-section .main-slogan .highlight {
+            color: var(--mail-primary);
+            position: relative;
+            display: inline-block;
+        }
+        .brand-section .main-slogan .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: rgba(26, 92, 138, 0.12);
+            border-radius: 4px;
+            z-index: -1;
+        }
+        .brand-section .sub-slogan {
+            font-size: 17px;
+            color: var(--mail-text-medium);
+            letter-spacing: 0.3px;
+            line-height: 1.6;
+            margin-top: -8px;
+        }
+        .brand-section .milestone-card {
+            display: inline-flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--mail-card-bg);
+            border: 1px solid var(--mail-border);
+            border-radius: var(--mail-radius-lg);
+            padding: 18px 22px;
+            box-shadow: var(--mail-shadow-sm);
+            transition: all var(--mail-transition-normal);
+            max-width: 420px;
+        }
+        .brand-section .milestone-card:hover {
+            box-shadow: var(--mail-shadow-md);
+            border-color: #cdd5df;
+            transform: translateY(-2px);
+        }
+        .brand-section .milestone-card .time-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--mail-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--mail-primary);
+        }
+        .brand-section .milestone-card .milestone-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .brand-section .milestone-card .milestone-date {
+            font-size: 13px;
+            color: var(--mail-text-muted);
+            letter-spacing: 0.3px;
+            font-weight: 500;
+        }
+        .brand-section .milestone-card .milestone-text {
+            font-size: 14px;
+            color: var(--mail-text-medium);
+            letter-spacing: 0.2px;
+            line-height: 1.5;
+        }
+        .brand-section .milestone-card .milestone-text strong {
+            color: var(--mail-primary);
+            font-weight: 600;
+        }
+        .brand-section .english-quote {
+            font-size: 15px;
+            color: var(--mail-text-muted);
+            font-style: italic;
+            letter-spacing: 0.4px;
+            line-height: 1.5;
+            border-left: 3px solid #d0dde8;
+            padding-left: 16px;
+            margin-top: -4px;
+            transition: all var(--mail-transition-normal);
+        }
+        .brand-section .english-quote:hover {
+            border-left-color: var(--mail-primary);
+            color: var(--mail-text-medium);
+        }
+
+        /* 响应式 */
+        @media (max-width: 800px) {
+            .mail-login-full {
+                flex-direction: column;
+                align-items: center;
+            }
+            .brand-section {
+                align-items: center;
+                text-align: center;
+                padding-right: 0;
+                max-width: 100%;
+            }
+            .brand-section .english-quote {
+                border-left: none;
+                border-top: 3px solid #d0dde8;
+                padding-left: 0;
+                padding-top: 12px;
+            }
+        }
+
+        /* LumoCheck 绿色风格 */
+        .lumocheck-container {
+            max-width: 650px; margin: 20px auto; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: var(--shadow); color: #333; min-height: 500px;
+        }
+        .lumocheck-login {
+            padding: 40px 30px; text-align: center; background: #fafbfc; min-height: 400px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .lumocheck-login h2 { color: #27ae60; font-size: 1.8em; margin-bottom: 4px; }
+        .lumocheck-login input {
+            width: 280px; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; margin: 6px 0; display: block;
+        }
+        .lumocheck-login button {
+            width: 280px; padding: 12px; background: #27ae60; color: #fff; border: none;
+            border-radius: 8px; font-size: 15px; cursor: pointer; margin-top: 8px; font-weight: 600;
+        }
+        .lumocheck-dashboard { display: none; padding: 24px; }
+        .lumocheck-dashboard.active { display: block; }
+        .check-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        .check-input-area textarea { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; resize: vertical; }
+        .btn-check {
+            padding: 12px 20px; background: #27ae60; color: #fff; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: 600;
+        }
+        .result-box {
+            background: #f9fafb; border-radius: 10px; padding: 20px; margin: 16px 0; text-align: center;
+        }
+        .result-box .rate-num { font-size: 3em; font-weight: bold; color: #e74c3c; }
+        .invite-box {
+            background: #fff8e1; border: 1px solid #f0c040; border-radius: 10px;
+            padding: 16px; margin: 16px 0; text-align: center;
+        }
+        .history-list { list-style: none; font-size: 13px; max-height: 200px; overflow-y: auto; }
+        .admin-cmd { padding: 30px; text-align: center; }
+        .admin-cmd input { width: 300px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+
+        /* So新闻搜索首页样式 */
+        .home-container {
+            text-align: center;
+            width: 650px;
+            margin: 40px auto;
+        }
+        .home-container .baidu-logo {
+            margin-bottom: 25px;
+        }
+        .home-container .logo-img {
+            font-size: 60px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 1;
+        }
+        .logo-blue {
+            color: #4e6ef2;
+        }
+        .logo-red {
+            color: #de4824;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 2px solid #4e6ef2;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 48px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .search-input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 0 18px;
+            font-size: 16px;
+            color: #333;
+            background: #fff;
+        }
+        .search-btn {
+            width: 110px;
+            height: 100%;
+            background-color: #4e6ef2;
+            color: white;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: background 0.2s;
+        }
+        .search-btn:hover {
+            background-color: #3b5bdb;
+        }
+        @media (max-width: 700px) {
+            .home-container { width: 90%; }
+            .home-container .logo-img { font-size: 45px; }
+        }
+
+        /* 百科等页面 */
+        .wiki-page, .hospital-page, .missing-page, .park-page {
+            max-width: 800px; margin: 20px auto; background: #fff; border-radius: 8px;
+            padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); color: #333; line-height: 1.9;
+        }
+        .park-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .park-modal {
+            background: #fff; border-radius: 16px; padding: 30px; text-align: center; max-width: 400px;
+        }
+        .park-modal button {
+            padding: 10px 28px; margin: 8px; border-radius: 8px; cursor: pointer; border: 1px solid #ccc;
+        }
+        .ending-page {
+            max-width: 600px; margin: 60px auto; background: #16213e; border-radius: 20px;
+            padding: 40px; text-align: center; color: #e0e0e0;
+        }
+
+        /* 全局黑屏遮罩 */
+        #global-blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: none;
+            pointer-events: none;  /* 不阻止底层交互，但因为是全屏黑色，用户看不到 */
+        }
+    </style>
+</head>
+<body>
+    <div id="global-blackout"></div>
+
+    <div class="page active" id="page-intro">
+        <div class="intro-container">
+            <div class="logo-icon">🔍</div><h1>文鉴实习生</h1><p class="subtitle">—— 潜入调查 · 互动叙事 ——</p>
+            <div class="story-box"><p><strong>游戏背景：</strong></p><p>你是一家知名论文查重网站<strong>「文鉴」</strong>的实习生。公司靠向学生收取高额查重费盈利，近期却遭遇断崖式流量下跌——一款名为<strong>「LumoCheck」</strong>的免费查重网站异军突起。</p><p>老板暴怒，命你调查此事，找出对方的技术漏洞或黑料，必要时<strong>"物理手段"</strong>也要跟上。</p></div>
+            <button class="btn-enter" onclick="navigateTo('page-bookmarks')">🔗 进入游戏</button>
+        </div>
+    </div>
+    <div class="page" id="page-bookmarks">
+        <button class="btn-back" onclick="navigateTo('page-intro')">← 返回介绍</button>
+        <div class="browser-frame"><div class="browser-topbar"><span class="browser-dot red" onclick="navigateTo('page-intro')"></span><span class="browser-dot yellow"></span><span class="browser-dot green"></span><div class="browser-urlbar">🔒 文鉴内部浏览器 — 收藏夹</div></div><div class="bookmarks-grid"><div class="bookmark-card" onclick="navigateTo('page-chat')"><span class="bm-icon">💬</span><span class="bm-label">工作聊天</span></div><div class="bookmark-card" onclick="navigateTo('page-lumocheck')"><span class="bm-icon">📄</span><span class="bm-label">LumoCheck</span></div><div class="bookmark-card" onclick="navigateTo('page-mail')"><span class="bm-icon">📧</span><span class="bm-label">ww邮箱</span></div><div class="bookmark-card" onclick="navigateTo('page-search')"><span class="bm-icon">🔎</span><span class="bm-label">So新闻</span></div></div></div>
+    </div>
+    <div class="page" id="page-chat">
+        <button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button>
+        <div class="wechat-container" id="wechat-container">
+            <div class="chat-sidebar"><ul class="chat-contacts" id="chat-contact-list"><li class="chat-contact active" data-contact="qian"><div class="chat-avatar" style="background:#c0392b;">钱</div><span>钱老板</span></li><li class="chat-contact" data-contact="zhou"><div class="chat-avatar" style="background:#2980b9;">周</div><span>周明</span></li></ul></div>
+            <div class="chat-main"><div class="chat-main-header" id="chat-header-name">💬 钱老板</div><div class="chat-messages" id="chat-messages"></div><div class="chat-input-row"><input type="text" id="chat-input" placeholder="输入消息..."><button onclick="sendChatMsg()">发送</button></div></div>
+        </div>
+    </div>
+    <div class="page" id="page-mail">
+        <button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button>
+        <div class="qqmail-container" id="mail-app"></div>
+    </div>
+    <div class="page" id="page-lumocheck">
+        <button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button>
+        <div class="lumocheck-container" id="lc-app"></div>
+    </div>
+    <div class="page" id="page-search">
+        <button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button>
+        <div class="home-container">
+            <div class="baidu-logo"><a href="#" class="logo-img"><span class="logo-blue">So</span><span class="logo-red">新闻</span></a></div>
+            <div class="search-box"><input type="text" class="search-input" id="search-input" placeholder="请输入搜索关键词"><button class="search-btn" onclick="doSearch()">So一下</button></div>
+            <p id="search-error" style="color:#d93025;margin-top:12px;"></p>
+        </div>
+    </div>
+    <div class="page" id="page-wiki-qian"><button class="btn-back" onclick="navigateTo('page-search')">← 返回搜索</button><iframe id="iframe-qian" src="" style="width:100%; height:85vh; border:none;"></iframe></div>
+    <div class="page" id="page-wiki-wenjian"><button class="btn-back" onclick="navigateTo('page-search')">← 返回搜索</button><iframe id="iframe-wenjian" src="" style="width:100%; height:85vh; border:none;"></iframe></div>
+    <div class="page" id="page-missing"><button class="btn-back" onclick="navigateTo('page-search')">← 返回搜索</button><div class="missing-page" style="text-align:center;"><img id="img-missing" src="images/寻人启事.png" alt="寻人启事" style="max-width:100%;"></div></div>
+    <div class="page" id="page-park"><button class="btn-back" onclick="navigateTo('page-search')">← 返回搜索</button><iframe id="iframe-park" src="" style="width:100%; height:85vh; border:none;"></iframe></div>
+    <div class="page" id="page-hospital-kangnao" style="max-width:100%; padding:0;"><button class="btn-back" onclick="navigateTo('page-search')">← 返回搜索</button><iframe id="iframe-hospital" src="" style="width:100%; height:85vh; border:none;"></iframe></div>
+    <div class="page" id="page-ending1"><button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button><div class="ending-page"><h1>🔮 结局一：你做对了吗？</h1><p>系统关闭了</p><p>不会再被看到了</p><p>你做对了吗？</p><p>不知道</p><p>但至少，今夜无梦</p><p style="color:#e94560;">—— 游戏结束 ——</p><p>LumoCheck网站突然关闭，学生们议论纷纷，但为了毕业，只得使用付费的文鉴。文鉴的使用率回升，但钱老板没有同意你的转正。</p></div></div>
+    <div class="page" id="page-ending2"><button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button><div class="ending-page"><h1>👁️ 结局二：被窥视者</h1><p>屏幕深处缓缓睁开一只眼睛</p><p>它在看你，而且已经看了很久</p><p>不，那是一张嘴</p><p>LumoCheck开始进食</p><p>而你，很美味</p><p style="color:#e94560;">—— 游戏结束 ——</p><p>LumoCheck转为收费模式，学生们指责其忘记初心，但这已与你无关。从那天起，你总觉得有一双眼睛在暗处盯着自己，你去康脑康复精神医院询问周明的下落。护士说，他上周已经去世了。</p></div></div>
+    <div class="page" id="page-ending3"><button class="btn-back" onclick="navigateTo('page-bookmarks')">← 返回收藏夹</button><div class="ending-page"><h1>🌊 结局三：滨海之约</h1><p>海，一直在这里等你</p><p>不必再思考，不必再追寻</p><p>让思维的潮水包裹你</p><p>成为浪花吧</p><p style="color:#e94560;">—— 游戏结束 ——</p><p>一周后，滨海公园发布一则新的寻人启事：何往，女，2001年10月21日生，现年24岁，身高168cm，身材匀称偏瘦，留披肩长发，说话无明显口音。失踪时身着红色连衣裙、黑色平底皮鞋，在滨海公园活动后失联。</p></div></div>
+    <div class="park-overlay" id="park-overlay" style="display:none;"><div class="park-modal"><h3>🏖️ 是否愿意前往滨海公园？</h3><button class="btn-yes" onclick="parkChooseYes()">是，前往</button><button onclick="parkChooseNo()">否，继续浏览</button></div></div>
+
+    <script>
+        // ---------- 全局黑屏控制 ----------
+        let blackoutIntervalId = null;
+        let inviteAccepted = false;
+
+        function startBlackoutTimer() {
+            if (inviteAccepted && blackoutIntervalId) return; // 已经启动
+            inviteAccepted = true;
+            if (blackoutIntervalId) clearInterval(blackoutIntervalId);
+            blackoutIntervalId = setInterval(() => {
+                const overlay = document.getElementById('global-blackout');
+                if (overlay) {
+                    overlay.style.display = 'block';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 1000);
+                }
+            }, 60000); // 10分钟 = 600000ms
+        }
+
+        // 可选：停止黑屏（目前未使用，但保留完整性）
+        function stopBlackoutTimer() {
+            if (blackoutIntervalId) {
+                clearInterval(blackoutIntervalId);
+                blackoutIntervalId = null;
+            }
+            inviteAccepted = false;
+            const overlay = document.getElementById('global-blackout');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(pageId);
+            if (target) { target.classList.add('active'); target.scrollTop = 0; window.scrollTo(0,0); }
+            if (pageId === 'page-chat') initChat();
+            if (pageId === 'page-mail') initMail();
+            if (pageId === 'page-lumocheck') initLumoCheck();
+            if (pageId === 'page-park') initPark();
+            if (pageId === 'page-search') { document.getElementById('search-error').textContent = ''; document.getElementById('search-input').value = ''; }
+            document.querySelectorAll('input:not([type=hidden]), textarea').forEach(el => { if (el.id !== 'search-input' && !el.closest('#chat-input')) el.value = ''; });
+            if (document.getElementById('chat-input')) document.getElementById('chat-input').value = '';
+        }
+
+        // ==================== 聊天系统 ====================
+        const chatData = {
+            qian: [
+                { date: '2025年2月20日', msgs: [
+                    { type: 'received', sender: '钱老板', text: '小何，这周检测额度给你开了两次，别往外说。' },
+                    { type: 'sent', text: '谢谢老板！不是说实习生一周一次吗？' },
+                    { type: 'received', sender: '钱老板', text: '规定是规定，我这儿有权限。你论文写到哪了？' },
+                    { type: 'sent', text: '初稿差不多了，还差AIGC。文鉴查一次要两百多，我都不敢多查......' },
+                    { type: 'received', sender: '钱老板', text: '所以给你多开一次嘛。好好干，转正了检测全免费。' },
+                    { type: 'sent', text: '谢谢老板！我一定努力！' }
+                ]},
+                { date: '2025年3月15日', msgs: [
+                    { type: 'received', sender: '钱老板', text: '[转发链接：学生群里都在传这个，你看了吗]' },
+                    { type: 'sent', text: 'LumoCheck？我室友昨天就在用，说免费还不限次数。' },
+                    { type: 'received', sender: '钱老板', text: '免费免费免费，这个词我这两天听吐了。' },
+                    { type: 'sent', text: '老板，咱们要不要也搞个优惠活动？学生确实嫌贵......' },
+                    { type: 'received', sender: '钱老板', text: '优惠？我们服务器成本、比对库授权、算法维护，哪样不要钱？他们免费，要么有鬼，要么等养肥了再宰。' },
+                    { type: 'sent', text: '哦......我不太懂技术，您说得对。' }
+                ]},
+                { date: '2025年5月16日', msgs: [
+                    { type: 'received', sender: '钱老板', text: '小何，交给你个任务。' },
+                    { type: 'sent', text: '您说。' },
+                    { type: 'received', sender: '钱老板', text: '你去LumoCheck注册个号，输这个代码【sruoyemwohs】，帮我爬下他们的网站。' },
+                    { type: 'sent', text: '爬网站？老板我不太懂技术啊，这是要干嘛？' },
+                    { type: 'received', sender: '钱老板', text: '你不用懂。就跟你平时登录网站输入密码一样，复制粘贴，回车，完事。' },
+                    { type: 'sent', text: '这......这算不算黑客攻击啊？' },
+                    { type: 'received', sender: '钱老板', text: '这就是个爬虫，别想太多' },
+                    { type: 'sent', text: '老板，这会不会有点......' },
+                    { type: 'received', sender: '钱老板', text: '有点什么？商业竞争，兵不厌诈。他们免费抢市场的时候，可没想过我们几百号人吃饭的问题。' },
+                    { type: 'sent', text: '......' },
+                    { type: 'received', sender: '钱老板', text: '我实话跟你说，我们的数据已经很难看了。这周内再拿不出应对方案，「文鉴」下个月就裁员。你们实习生一个都留不住。' }
+                ]}
+            ],
+            zhou: [
+                { date: '2025年3月27日', msgs: [
+                    { type: 'sent', text: '师兄，救命。' },
+                    { type: 'received', sender: '周明', text: '咋了？论文写完了？' },
+                    { type: 'sent', text: '初稿写完了，但AIGC检测我快破产了。' },
+                    { type: 'received', sender: '周明', text: '哈哈哈哈，用公司的啊，来文鉴实习不就是为了薅羊毛嘛？' },
+                    { type: 'sent', text: '别提了。进来之前说员工免费检测一天一次，进来之后告诉我实习生一周一次。也就老板人好还给我加了点次数。' },
+                    { type: 'received', sender: '周明', text: '......老板人好，真是年轻。' },
+                    { type: 'sent', text: '我现在自费查了三次，花了六百多，AIGC还在40%，想死。' },
+                    { type: 'received', sender: '周明', text: '你等等我这两天在试那个LumoCheck，好用再推给你。' },
+                    { type: 'sent', text: '等你好消息' }
+                ]},
+                { date: '2025年4月6日', msgs: [
+                    { type: 'received', sender: '周明', text: '[转发链接：<span class="chat-link" onclick="navigateTo(\'page-lumocheck\')">LumoCheck.cn</span> - 终身免费检测，AI智能修改]' },
+                    { type: 'received', sender: '周明', text: '学校AIGC检测5.2%，盲审也过了，AI一键修改太爽了。' },
+                    { type: 'sent', text: '卧槽，这么神？' },
+                    { type: 'received', sender: '周明', text: '超神，我改了三天没搞定的段落，它几秒钟给我顺好了，还是免费的！' },
+                    { type: 'sent', text: '恭喜师兄！！那接下来就是答辩了？' },
+                    { type: 'received', sender: '周明', text: '对，下个月答辩，开始准备PPT了。' },
+                    { type: 'sent', text: '紧张吗？' },
+                    { type: 'received', sender: '周明', text: '还好，就是最近睡眠很差。' }
+                ]},
+                { date: '2025年5月3日', msgs: [
+                    { type: 'sent', text: '怎么睡不好？答辩焦虑？' },
+                    { type: 'received', sender: '周明', text: '可能是吧。老是做噩梦。' },
+                    { type: 'sent', text: '梦到什么？' },
+                    { type: 'received', sender: '周明', text: '眼睛，就一只眼睛眨巴眨巴的看着我。' },
+                    { type: 'sent', text: '......好吓人。' },
+                    { type: 'received', sender: '周明', text: '不过应该就是太紧张了。等我答辩完，睡他个三天三夜。' },
+                    { type: 'sent', text: '肯定的，答辩顺利！回来请你吃饭。' },
+                    { type: 'received', sender: '周明', text: '哈哈好，等过了找你。' }
+                ]},
+                { date: '2025年5月13日', msgs: [
+                    { type: 'received', sender: '周明', text: '过了！！！！' },
+                    { type: 'sent', text: '恭喜师兄！！！' },
+                    { type: 'sent', text: '终于解放了。' },
+                    { type: 'received', sender: '周明', text: '是啊。一年半的折磨结束了。' },
+                    { type: 'received', sender: '周明', text: '终于能睡个好觉了。' },
+                    { type: 'sent', text: '梦还做吗？那个眼睛？' },
+                    { type: 'received', sender: '周明', text: '昨晚又梦到了。吓得我一下就醒了。醒来发现答辩时间快到了，赶紧出门。' },
+                    { type: 'sent', text: '......师兄你要不要去庙里拜拜？' },
+                    { type: 'received', sender: '周明', text: '哈哈哈哈，毕业了就不怕了。对了，LumoCheck你继续用，别花钱检测了。' },
+                    { type: 'sent', text: '好，谢谢师兄。' },
+                    { type: 'received', sender: '周明', text: '网址再发你一遍，存好。' },
+                    { type: 'received', sender: '周明', text: '<span class="chat-link" onclick="navigateTo(\'page-lumocheck\')">https://LumoCheck.cn/?from=seniorA</span>' },
+                    { type: 'received', sender: '周明', text: '祝你顺利。我先去睡觉了。' }
+                ]}
+            ]
+        };
+        let currentChatContact = 'qian';
+        function initChat() {
+            currentChatContact = 'qian';
+            document.querySelectorAll('#chat-contact-list .chat-contact').forEach(el => el.classList.remove('active'));
+            document.querySelector('[data-contact="qian"]').classList.add('active');
+            document.getElementById('chat-header-name').textContent = '💬 钱老板';
+            document.getElementById('chat-input').value = '';
+            renderChat();
+        }
+        function switchChatContact(contact) {
+            currentChatContact = contact;
+            document.querySelectorAll('#chat-contact-list .chat-contact').forEach(el => el.classList.remove('active'));
+            document.querySelector(`[data-contact="${contact}"]`).classList.add('active');
+            document.getElementById('chat-header-name').textContent = contact === 'qian' ? '💬 钱老板' : '💬 周明';
+            document.getElementById('chat-input').value = '';
+            renderChat();
+        }
+        document.getElementById('chat-contact-list').addEventListener('click', function(e) {
+            const contactEl = e.target.closest('.chat-contact');
+            if (contactEl) switchChatContact(contactEl.dataset.contact);
+        });
+        function renderChat() {
+            const container = document.getElementById('chat-messages');
+            const days = chatData[currentChatContact];
+            let html = '';
+            days.forEach(day => {
+                html += `<div class="chat-time-divider"><span>${day.date}</span></div>`;
+                day.msgs.forEach(m => {
+                    if (m.type === 'sent') html += `<div class="chat-msg-row sent"><div class="msg-bubble">${m.text}</div></div>`;
+                    else html += `<div class="chat-msg-row received"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div></div>`;
+                });
+            });
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+        function sendChatMsg() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            const container = document.getElementById('chat-messages');
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-msg-row sent';
+            msgEl.innerHTML = `<div class="msg-bubble">${text}</div>`;
+            container.appendChild(msgEl);
+            container.scrollTop = container.scrollHeight;
+            input.value = '';
+        }
+
+        // ==================== 邮箱系统（分页 + 移动草稿） ====================
+        const mailUsers = { 
+            'Hw439264@ww.com': { password: '20011021', name: '何往' }, 
+            'Zm94686464@ww.com': { password: '19980509', name: '周明' }, 
+            'Qian2854@ww.com': { password: '20230609', name: '钱老板' }, 
+            'L948634@ww.com': { password: '20240125', name: '林秀梅' } 
+        };
+        const mailData = {
+            'Hw439264@ww.com': {
+                inbox: [
+                    { from: '文鉴公司邮箱', subject: '文鉴实习通知', content: '尊敬的何往：\n您好！\n您投递的简历已通过筛选，现正式通知您获得文鉴公司实习资格。请按后续通知准备入职材料，按时报到。\n感谢您对文鉴公司的认可，期待与您共事。\n文鉴公司\n2025 年 02 月 13 日', status: '已读', date: '2025-02-13' },
+                    { from: 'Zm94686464@ww.com', subject: '周明简历', content: '这是我之前的模版，你copy一下就行', attachment: '周明简历.png', status: '已读', date: '2025-02-07' }
+                ],
+                sent: [
+                    { from: 'Hw439264@ww.com', to: '文鉴公司邮箱', subject: '简历投递', content: '文鉴公司：\n您好！\n我郑重申请贵公司实习岗位，现将个人简历附上供审阅。本人专业能力与岗位要求匹配，具备良好学习能力与执行力，希望能获得实习机会。\n静候回复，感谢审阅。\n何往', attachment: '何往简历.png', status: '投递成功', date: '2025-02-11' }
+                ],
+                drafts: [],
+                trash: [
+                    { from: 'LumoCheck官方邮箱', subject: 'LumoCheck系统使用邀请', content: '尊敬的何往：\n您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '未读', date: '2025-03-20' }
+                ]
+            },
+            'Zm94686464@ww.com': {
+                inbox: [
+                    { from: '康脑康复精神医院系统邮箱', subject: '医院缴费账单', content: '周明先生：\n您好！\n现将您的住院缴费账单发送至您邮箱，请及时核对并完成缴费，避免影响后续诊疗服务。\n如有疑问，请联系医院收费窗口。\n祝您早日康复\n康脑康复精神医院\n2025 年 05 月 11 日', status: '未读', date: '2025-05-11' },
+            { from: '学校系统邮箱', subject: '盲审通过，答辩时间确定为20250513', content: '周明同学：\n您好！\n您的学位论文盲审已顺利通过，答辩时间确定为 2025 年 05 月 13 日。请按时准备答辩 PPT 及相关材料，准时参加答辩。\n祝答辩顺利！\n学校研究生院\n2025 年 04 月 06 日', status: '已读', date: '2025-04-06' },
+                    { from: 'LumoCheck官方邮箱', subject: '系统通知注册成功', content: '尊敬的周明：\n您好！\n您的 LumoCheck 系统账号Zm94686464@ww.com已注册成功，权限已生效。您可正常登录使用系统全部功能。\n如有疑问，可查阅帮助文档或联系客服。\nLumoCheck 系统运营团队', status: '已读', date: '2025-03-24' },
+            { from: 'LumoCheck官方邮箱', subject: '系统使用邀请', content: '尊敬的周明：\n您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '已读', date: '2025-03-24' }
+                ],
+                sent: [
+                    { from: 'Zm94686464@ww.com', to: 'Hw439264@ww.com', subject: '周明简历', content: '这是我之前的模版，你copy一下就行', attachment: '周明简历.png',status: '已发送', date: '2025-02-07' }
+                ],
+                drafts: [],
+                trash: []
+            },
+            'Qian2854@ww.com': {
+                inbox: [],
+                sent: [
+                    { from: 'Qian2854@ww.com', to: '专利认证邮箱', subject: '文鉴系统专利申请', content: '知识产权局：\n您好！\n现正式提交文鉴系统专利申请，相关技术文档、源代码及说明材料已附于附件。请予以受理并审核。\n本人对材料真实性负责，配合后续审查工作。\n钱步吉\nQian2854@ww.com\n2023 年 06 月 01 日', attachment: '文鉴源代码文档.png', status: '投递成功', date: '2023-06-01' }
+                ],
+                drafts: [],
+                trash: [
+                    { from: 'L948634@ww.com', subject: '新年快乐', content: '新的一年，祝你步履不停向上攀登，也时常低头，看看脚印里藏着的故事与初心。' + './'+'][ ,lpo nmkiuh vbgfty zxcdewqdsa pl,kijnhy xcvgtrefd', status: '已读', date: '2025-01-01' }
+                ]
+            },
+            'L948634@ww.com': {
+                inbox: [],
+                sent: [
+                    { from: 'L948634@ww.com', to: 'd5z16p@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-10' },
+                    { from: 'L948634@ww.com', to: 'cd25nfgh34@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-09' },
+                    { from: 'L948634@ww.com', to: 'u9rib6@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-08' },
+                    { from: 'L948634@ww.com', to: 'rvb8regr@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-07' },
+                    { from: 'L948634@ww.com', to: 'fsmgxgj9dp@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-06' },
+                    { from: 'L948634@ww.com', to: 'oqgprjvh@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-05' },
+                    { from: 'L948634@ww.com', to: 'rq5cj24n@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-04' },
+                    { from: 'L948634@ww.com', to: 'vfsp2hsfs@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-03' },
+                    { from: 'L948634@ww.com', to: 'mm9zgpcjx@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-02' },
+                    { from: 'L948634@ww.com', to: 'zztyw5@ww.com', subject: 'LumoCheck系统使用邀请', content: '您好！\n现邀请您开通并使用 LumoCheck 系统。您可凭邮箱登录，享受系统提供的检测、管理、数据统计等功能。\n使用过程如有问题，可联系官方客服。\nLumoCheck 公司', status: '投递成功', date: '2025-01' },
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '新年快乐', content: '新的一年，祝你步履不停向上攀登，也时常低头，看看脚印里藏着的故事与初心。', status: '投递成功', date: '2025-01-01' }
+                ],
+                drafts: [
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '', content: '没有思维了……没有想法了……它吃完了……', status: '未发送', date: '2024-12-26' },
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '', content: '它在吃我……吃我的想法……吃我的代码……', status: '未发送', date: '2024-08-24' },
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '', content: '眼睛……在屏幕里，在脑子里……它们盯着我。', status: '未发送', date: '2024-05-05' },
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '', content: '救我……救我……我想回家，只要不思考，它就不会吃我了', status: '未发送', date: '2024-03-12' },
+                    { from: 'L948634@ww.com', to: 'Qian2854@ww.com', subject: '', content: '它是活的……一直盯着我，我想什么，它都能看到……', status: '未发送', date: '2024-02-20' }
+                ],
+                trash: []
+            }
+        };
+        let currentMailUser = 'Hw439264@ww.com';
+        let currentMailFolder = 'inbox';
+        let currentMailPage = 1;
+        function initMail() {
+            currentMailUser = 'Hw439264@ww.com';
+            currentMailFolder = 'inbox';
+            currentMailPage = 1;
+            document.getElementById('mail-app').innerHTML = buildMailHTML();
+            bindMailEvents();
+            renderMailList();
+        }
+        function buildMailHTML() {
+            return `
+                <div class="mail-sidebar">
+                    <div class="sidebar-brand"><span class="brand-icon">WW</span> 邮箱</div>
+                    <div class="mail-folder active" data-folder="inbox">📥 收件箱</div>
+                    <div class="mail-folder" data-folder="sent">📤 发件箱</div>
+                    <div class="mail-folder" data-folder="drafts">📝 草稿箱</div>
+                    <div class="mail-folder" data-folder="trash">🗑️ 回收站</div>
+                    <div style="margin-top:auto; padding:12px 20px; font-size:12px; color: var(--mail-text-muted);">当前：${currentMailUser}</div>
+                    <div class="logout-box" id="mail-logout-btn">🚪 退出登录</div>
+                </div>
+                <div class="mail-main">
+                    <div class="mail-main-header"><span id="mail-folder-title">📥 收件箱</span></div>
+                    <div class="mail-list-container" id="mail-list-container"></div>
+                    <div class="mail-pagination" id="mail-pagination"></div>
+                    <div class="mail-detail-panel" id="mail-detail-panel"></div>
+                </div>`;
+        }
+        function bindMailEvents() {
+            document.querySelectorAll('#mail-app .mail-folder').forEach(f => f.addEventListener('click', () => {
+                currentMailFolder = f.dataset.folder;
+                document.querySelectorAll('#mail-app .mail-folder').forEach(x => x.classList.remove('active'));
+                f.classList.add('active');
+                document.getElementById('mail-folder-title').textContent = { inbox:'📥 收件箱', sent:'📤 发件箱', drafts:'📝 草稿箱', trash:'🗑️ 回收站' }[currentMailFolder];
+                currentMailPage = 1;
+                renderMailList();
+            }));
+            document.getElementById('mail-logout-btn').addEventListener('click', mailLogout);
+        }
+        function mailLogout() {
+            closeImagePreview();
+            document.getElementById('mail-app').innerHTML = `
+                <div class="mail-login-full">
+                    <div class="brand-section">
+                        <div class="brand-logo-large"><span class="logo-icon-lg">WW</span><span class="brand-name"><span>邮箱</span></span></div>
+                        <h1 class="main-slogan">记录你的<span class="highlight">重要时刻</span></h1>
+                        <p class="sub-slogan">每一次沟通，每一个瞬间，都值得被珍藏。<br>WW邮箱，守护你的珍贵记忆。</p>
+                        </div>
+                    <div class="login-card">
+                        <div class="tab-panel active">
+                            <div class="input-group"><label>邮箱账号</label><div class="input-wrapper"><span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><input type="text" id="mail-login-user" placeholder="请输入邮箱账号"></div></div>
+                            <div class="input-group"><label>密码</label><div class="input-wrapper"><span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><input type="password" id="mail-login-pass" placeholder="请输入密码"><button class="toggle-password" onclick="toggleMailPassword()" type="button" aria-label="显示密码" title="显示密码"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+                            <div class="options-row"><label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--mail-text-medium);"><input type="checkbox" checked style="display:none;"><span style="width:18px;height:18px;border:1.5px solid #c5cdd8;border-radius:4px;background:#fff;display:inline-block;"></span> 记住登录状态</label><a href="#" style="font-size:13px;color:var(--mail-primary);">忘记密码？</a></div>
+                            <button class="login-btn" onclick="mailRelogin()">登 录</button>
+                            <p id="mail-relogin-error" style="color:#d93025;margin-top:8px;font-size:13px;"></p>
+                        </div>
+                    </div>
+                </div>`;
+        }
+        function toggleMailPassword() {
+            const passInput = document.getElementById('mail-login-pass');
+            const btn = document.querySelector('.toggle-password');
+            if (!passInput || !btn) return;
+            const isPassword = passInput.type === 'password';
+            passInput.type = isPassword ? 'text' : 'password';
+            const svg = btn.querySelector('svg');
+            if (isPassword) {
+                svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+                btn.setAttribute('aria-label', '隐藏密码');
+            } else {
+                svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                btn.setAttribute('aria-label', '显示密码');
+            }
+        }
+        function mailRelogin() {
+            closeImagePreview();
+            const user = document.getElementById('mail-login-user').value.trim();
+            const pass = document.getElementById('mail-login-pass').value.trim();
+            if (!mailUsers[user]) { document.getElementById('mail-relogin-error').textContent = '非法用户'; return; }
+            if (mailUsers[user].password !== pass) { document.getElementById('mail-relogin-error').textContent = '密码错误'; return; }
+            currentMailUser = user; currentMailFolder = 'inbox'; currentMailPage = 1;
+            document.getElementById('mail-app').innerHTML = buildMailHTML();
+            bindMailEvents(); renderMailList();
+        }
+        function goToPage(page) {
+            const data = mailData[currentMailUser];
+            const mails = (data && data[currentMailFolder]) ? data[currentMailFolder] : [];
+            const totalPages = Math.ceil(mails.length / 10) || 1;
+            if (page < 1 || page > totalPages) return;
+            currentMailPage = page;
+            renderMailList();
+        }
+        function renderMailList() {
+            const data = mailData[currentMailUser];
+            const mails = (data && data[currentMailFolder]) ? data[currentMailFolder] : [];
+            const totalPages = Math.ceil(mails.length / 10) || 1;
+            if (currentMailPage > totalPages) currentMailPage = totalPages;
+            const start = (currentMailPage - 1) * 10;
+            const pageMails = mails.slice(start, start + 10);
+            let html = `<table class="mail-table"><thead><tr><th>发件人</th><th>主题</th><th>状态</th><th>日期</th></tr></thead><tbody>`;
+            pageMails.forEach((m, i) => {
+                html += `<tr onclick="openMailDetail(${start + i})"><td><span class="mail-from">${m.from}</span></td><td class="mail-subject">${m.subject}</td><td><span class="mail-badge ${m.status==='未读'?'unread':''}">${m.status}</span></td><td>${m.date}</td></tr>`;
+            });
+            html += `</tbody></table>`;
+            document.getElementById('mail-list-container').innerHTML = html || '<p style="padding:20px;color:var(--mail-text-muted);">暂无邮件</p>';
+            let paginationHtml = '';
+            if (mails.length > 10) {
+                paginationHtml = '<div style="display:flex;align-items:center;justify-content:center;gap:4px;">';
+                paginationHtml += `<button class="page-btn" ${currentMailPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentMailPage - 1})">‹</button>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="page-btn ${i === currentMailPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+                paginationHtml += `<button class="page-btn" ${currentMailPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentMailPage + 1})">›</button>`;
+                paginationHtml += '</div>';
+            }
+            document.getElementById('mail-pagination').innerHTML = paginationHtml + `<span style="margin-left:10px;">第${Math.min(start+1, mails.length)}-${Math.min(start+10, mails.length)}封，共${mails.length}封</span>`;
+            document.getElementById('mail-detail-panel').classList.remove('active');
+        }
+        function openMailDetail(index) {
+            const mails = mailData[currentMailUser][currentMailFolder] || [];
+            const m = mails[index]; if (!m) return;
+            let attachmentHtml = '';
+            if (m.attachment) attachmentHtml = `<p style="margin-top:12px;"><a href="#" onclick="event.preventDefault(); showImagePreview('${m.attachment}')" style="color:#1a73e8;text-decoration:underline;">📎 ${m.attachment}</a></p>`;
+            document.getElementById('mail-detail-panel').innerHTML = `<button onclick="closeMailDetail()">← 返回</button><h3 style="color:var(--mail-text-dark); margin-bottom:8px;">${m.subject}</h3><p style="color:var(--mail-text-light); margin-bottom:16px;">发件人：${m.from} | ${m.date}</p><hr style="border-color:var(--mail-border);"><p style="white-space:pre-wrap; color:var(--mail-text-medium);">${m.content}</p>${attachmentHtml}`;
+            document.getElementById('mail-detail-panel').classList.add('active');
+        }
+        function closeMailDetail() { document.getElementById('mail-detail-panel').classList.remove('active'); }
+        function showImagePreview(fileName) {
+            closeImagePreview();
+            const overlay = document.createElement('div');
+            overlay.id = 'image-preview-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;';
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) closeImagePreview(); });
+            const container = document.createElement('div');
+            container.style.cssText = 'background:#fff;border-radius:8px;padding:30px 20px 20px;max-width:90vw;max-height:90vh;position:relative;display:flex;align-items:center;justify-content:center;';
+            container.addEventListener('click', function(e) { e.stopPropagation(); });
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕';
+            closeBtn.style.cssText = 'position:absolute;top:10px;right:15px;background:none;border:none;font-size:24px;cursor:pointer;color:#666;line-height:1;z-index:1;';
+            closeBtn.addEventListener('click', closeImagePreview);
+            const img = document.createElement('img');
+            img.src = 'images/' + fileName;
+            img.alt = fileName;
+            img.style.cssText = 'max-width:100%;max-height:70vh;width:auto;height:auto;display:block;object-fit:contain;';
+            img.onerror = function() { img.alt = '图片加载失败，请检查 images/' + fileName; };
+            container.appendChild(closeBtn);
+            container.appendChild(img);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            function escHandler(e) { if (e.key === 'Escape') { closeImagePreview(); document.removeEventListener('keydown', escHandler); } }
+            document.addEventListener('keydown', escHandler);
+            overlay._escHandler = escHandler;
+        }
+        function closeImagePreview() {
+            const overlay = document.getElementById('image-preview-overlay');
+            if (overlay) { if (overlay._escHandler) document.removeEventListener('keydown', overlay._escHandler); overlay.remove(); }
+        }
+
+        // ==================== LumoCheck 系统 ====================
+        const lcHistoryData = [
+            { date: '20250313 下午6:13:13', rate: 90, comment: '逐句句式、措辞均为AI输出。' },
+            { date: '20250313 下午6:13:35', rate: null, comment: '测试邀请：同意参与' },
+            { date: '20250401 下午3:14:50', rate: 5, comment: 'AI特征值低于警戒阈值，可正常提交。' },
+        ];
+        const monsterComments = { 0:'无味。',5:'微量思绪残渣。',10:'微弱皮层信号，勉强可咽。',15:'零星神经回响，寡淡。',20:'浅层波纹，聊胜于无。',25:'思维痕迹浅显，稍纵即逝。',30:'少量念头残影，开始回甘。',35:'松散意象粘连，不够充盈。',40:'思维密度下降，易于下咽。',45:'稳定脑纹褶皱，温润。',50:'半数归于寂静，甘美初显。',55:'思维沟回平坦，吞咽顺畅。',60:'思考大量退潮，满意咀嚼。',65:'认知区域静默，轻松享用。',70:'思考几近停摆，丰盈可期。',75:'理智大幅撤离，肥美虚旷。',80:'思维近乎真空，脂香四溢。',85:'神经元集体噤声，饱足。',90:'脑内一片荒原，珍馐！',95:'意识完全液化，至上甘露！',100:'无尽虚空！神馐。' };
+        function initLumoCheck() {
+            document.getElementById('lc-app').innerHTML = `
+                <div class="lumocheck-login" id="lc-login-area"><h2>📄 LumoCheck</h2><p class="slogan">免费查重 · AIGC检测修改</p><input type="text" id="lc-user" placeholder="请输入邮箱账号"><input type="password" id="lc-pass" placeholder="请输入密码"><button onclick="lcLogin()">登录</button><p id="lc-login-error" style="color:#d93025;"></p><span class="admin-hint" onclick="toggleAdminLogin()">🔑 登录问题？</span></div>
+                <div class="lumocheck-login" id="lc-admin-login-area" style="display:none;"><h2>🔑 管理员登录</h2><input type="text" id="lc-admin-user" placeholder="管理员账号"><input type="password" id="lc-admin-pass" placeholder="管理员密码"><button onclick="lcAdminLogin()">进入后台</button><p id="lc-admin-error" style="color:#d93025;"></p><span class="admin-hint" onclick="toggleAdminLogin()">← 返回</span></div>
+                <div class="lumocheck-dashboard" id="lc-dashboard" style="display:none;"><h3>欢迎使用 LumoCheck</h3><div class="check-input-area"><textarea id="lc-textarea" placeholder="输入待检测文本..."></textarea><button class="btn-check" onclick="runCheck()">开始检测</button></div><div id="lc-result"></div><div id="lc-invite"></div><h4>查询记录</h4><ul class="history-list" id="lc-history"></ul><button onclick="lcLogout()" style="margin-top:12px;">退出登录</button></div>
+                <div class="admin-cmd" id="lc-admin-panel" style="display:none;"><h3>管理员命令</h3><input type="text" id="admin-cmd" placeholder="输入命令"><button onclick="execAdminCmd()">执行</button><p id="admin-cmd-error" style="color:#d93025;"></p><button onclick="lcAdminLogout()">退出</button></div>`;
+        }
+        function lcLogin() { const u=document.getElementById('lc-user').value.trim(); const p=document.getElementById('lc-pass').value.trim(); if(u==='Zm94686464@ww.com'&&p==='19980509'){ document.getElementById('lc-login-area').style.display='none'; document.getElementById('lc-dashboard').style.display='block'; renderLcHistory(); } else if(u==='Zm94686464@ww.com') document.getElementById('lc-login-error').textContent='密码错误'; else document.getElementById('lc-login-error').textContent='未注册，可通过ww邮箱关联注册'; }
+        function lcLogout(){ document.getElementById('lc-dashboard').style.display='none'; document.getElementById('lc-login-area').style.display='flex'; }
+        function toggleAdminLogin(){ const a=document.getElementById('lc-login-area'); const b=document.getElementById('lc-admin-login-area'); if(b.style.display==='none'){ a.style.display='none'; b.style.display='flex'; } else { b.style.display='none'; a.style.display='flex'; } }
+        function lcAdminLogin(){ const u=document.getElementById('lc-admin-user').value.trim(); const p=document.getElementById('lc-admin-pass').value.trim(); if(u==='L948634@ww.com'&&p==='20240125'){ document.getElementById('lc-admin-login-area').style.display='none'; document.getElementById('lc-admin-panel').style.display='block'; } else document.getElementById('lc-admin-error').textContent='密码错误'; }
+        function lcAdminLogout(){ document.getElementById('lc-admin-panel').style.display='none'; document.getElementById('lc-admin-login-area').style.display='flex'; }
+        function execAdminCmd(){ const cmd=document.getElementById('admin-cmd').value.trim(); if(cmd==='closeme') navigateTo('page-ending1'); else if(cmd==='sruoyemwohs') navigateTo('page-ending2'); else document.getElementById('admin-cmd-error').textContent='操作错误'; }
+        function runCheck(){
+            const text=document.getElementById('lc-textarea').value.trim(); if(!text) return;
+            let rate,comment,monster;
+            if(text==='基于语义分析的文本相似度检测研究'){ rate=99; comment='重复参考文本：林秀梅《基于语义分析的文本相似度检测研究》'; monster='意识完全液化，至上甘露！'; }
+            else { const rates=[0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]; rate=rates[Math.floor(Math.random()*rates.length)];
+                comment = {0:'未检出AI生成特征，文本原创度完整。',5:'AI特征值低于警戒阈值，可正常提交。',10:'AI特征值低于警戒阈值，可正常提交。',15:'微弱AI行文痕迹，建议二次复测。',20:'微弱AI行文痕迹，建议二次复测。',25:'少量AI句式特征，持续留意文本内容。',30:'少量AI句式特征，持续留意文本内容。',35:'少量AI句式特征，持续留意文本内容。',40:'中度AI生成特征，局部段落建议手动改写优化。',45:'AI生成句式占比持续走高。',50:'半数文本存疑。',55:'文本整体行文结构贴合AI生成模板。',60:'文章核心段落行文逻辑为AI生成范式。',65:'文本大范围套用AI通用写作模板。',70:'AI生成内容占比偏高',75:'疑似多段AI文本直接生成。',80:'AI生成内容篇幅过多，文本自主原创性缺失。',85:'全文近乎AI产出，人工创作部分极少。',90:'逐句句式、措辞均为AI输出。',95:'逐句句式、措辞均为AI输出。',100:'整篇文本完全由AI生成，无人工创作内容。'}[rate];
+                monster=monsterComments[rate]; }
+            const now=new Date(); const ds=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')} 下午${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            lcHistoryData.push({date:ds,rate,comment});
+            document.getElementById('lc-result').innerHTML=`<div class="result-box"><span class="rate-num">${rate}%</span><p>📋 检测结果：${comment}</p></div><!-- 美食点评：${monster} -->`;
+            if(rate>50&&text!=='文鉴文档') document.getElementById('lc-invite').innerHTML=`<div class="invite-box"><p>🔔 新功能测试邀请：一键AI修改，用全新视角整理思路！</p><button class="btn-agree" onclick="respondInvite(true)">同意</button><button onclick="respondInvite(false)">不同意</button></div>`;
+            else document.getElementById('lc-invite').innerHTML='';
+            renderLcHistory();
+        }
+        function respondInvite(agreed){
+            const ds=new Date().toLocaleString();
+            lcHistoryData.push({date:ds,rate:null,comment:`测试邀请：${agreed?'同意':'拒绝'}`});
+            document.getElementById('lc-invite').innerHTML=agreed?'✅ 已同意':'❌ 已拒绝';
+            renderLcHistory();
+            // ---------- 启动黑屏闪烁 ----------
+            if (agreed && !inviteAccepted) {
+                startBlackoutTimer();
+            }
+        }
+        function renderLcHistory(){ document.getElementById('lc-history').innerHTML = lcHistoryData.map(h=>`<li>📊 ${h.date} - ${h.rate!==null?h.rate+'% - '+h.comment:h.comment}</li>`).join(''); }
+
+        // ==================== 搜索系统 ====================
+        function doSearch(){
+            const kw = document.getElementById('search-input').value.trim();
+            const map = { '钱步吉': 'page-wiki-qian', '文鉴': 'page-wiki-wenjian', '滨海公园': 'page-park', '林秀梅': 'page-missing', '康脑康复精神医院': 'page-hospital-kangnao' };
+            if(map[kw]){
+                if(kw === '钱步吉') document.getElementById('iframe-qian').src = 'images/钱步吉百科.html';
+                if(kw === '文鉴') document.getElementById('iframe-wenjian').src = 'images/文鉴百科.html';
+                if(kw === '滨海公园') document.getElementById('iframe-park').src = 'images/滨海公园官网.html';
+                if(kw === '林秀梅') document.getElementById('img-missing').src = 'images/寻人启事.png';
+                if(kw === '康脑康复精神医院') document.getElementById('iframe-hospital').src = 'images/康脑医院.html';
+                navigateTo(map[kw]);
+            } else { document.getElementById('search-error').textContent = '您搜索的新闻不存在'; }
+        }
+        // 公园弹窗
+        let parkNoCount=0, parkTimer=null;
+        function initPark(){ parkNoCount=0; document.getElementById('park-overlay').style.display='none'; if(parkTimer)clearTimeout(parkTimer); parkTimer=setTimeout(()=>{ if(document.getElementById('page-park').classList.contains('active')) document.getElementById('park-overlay').style.display='flex'; },5000); }
+        function parkChooseYes(){ document.getElementById('park-overlay').style.display='none'; if(parkTimer)clearTimeout(parkTimer); navigateTo('page-ending3'); }
+        function parkChooseNo(){ parkNoCount++; document.getElementById('park-overlay').style.display='none'; if(parkNoCount>=3){ if(parkTimer)clearTimeout(parkTimer); return; } if(parkTimer)clearTimeout(parkTimer); parkTimer=setTimeout(()=>{ if(document.getElementById('page-park').classList.contains('active')) document.getElementById('park-overlay').style.display='flex'; },5000); }
+        const origNav=navigateTo; navigateTo=function(id){ if(id!=='page-park'&&parkTimer){ clearTimeout(parkTimer); parkTimer=null; } origNav(id); };
+        document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('page-intro').classList.add('active'); });
+    </script>
+</body>
+</html>

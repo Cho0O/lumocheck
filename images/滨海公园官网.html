@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滨海公园 - 城市海岸会客厅</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            background-color: #d9e9e0;
+            color: #1e3525;
+            line-height: 1.6;
+        }
+
+        .page-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('公园风景.png');
+            /* 🔁 已替换为本地公园风景照片 */
+            background-size: cover;
+            background-position: center 30%;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 轻微遮罩层 */
+        .page-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 头部：导航 + 标题 */
+        .header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        /* 上端功能块改为直角 */
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 14px 44px;
+            border-radius: 0;
+            box-shadow: 0 8px 24px rgba(0, 40, 30, 0.1);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1c402e;
+            font-weight: 500;
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            transition: all 0.2s;
+            padding: 4px 8px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            border-bottom-color: #528a64;
+            color: #0a2b18;
+            font-weight: 600;
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 5px 20px rgba(0, 40, 20, 0.6);
+            letter-spacing: 6px;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .sub-title {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            background: rgba(30, 60, 40, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 6px 24px;
+            border-radius: 0;
+            letter-spacing: 2px;
+        }
+
+        /* 简介卡片 */
+        .intro-card {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(18px);
+            border-radius: 0;
+            padding: 32px 36px;
+            box-shadow: 0 18px 40px rgba(20, 60, 40, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            margin-top: 35vh;
+            margin-bottom: 28px;
+            transition: transform 0.2s ease;
+        }
+
+        .intro-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .intro-card h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #173e25;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .intro-text {
+            color: #253d2c;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+
+        /* 底部信息条：内部文字两端对齐均匀分布 */
+        .bottom-bar {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(240, 245, 240, 0.9);
+            padding: 20px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1rem;
+            color: #173320;
+            border: none;
+            box-shadow: none;
+            margin-bottom: 30px;
+        }
+
+        .bottom-bar .info-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .bottom-bar .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .ai-badge {
+            font-size: 0.8rem;
+            background: #dcebe0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #3b5a45;
+        }
+
+        @media (max-width: 700px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            .nav-links {
+                gap: 20px;
+                padding: 12px 24px;
+            }
+            .intro-card {
+                margin-top: 20vh;
+                padding: 24px 20px;
+            }
+            .bottom-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .bottom-bar .info-group {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="content-container">
+            <!-- 头部导航与标题 -->
+            <div class="header">
+                <div class="nav-links">
+                    <a href="#" class="active">首页</a>
+                    <a href="#">景点介绍</a>
+                    <a href="#">活动公告</a>
+                    <a href="#">游客服务</a>
+                </div>
+            </div>
+
+            <!-- 简介卡片 -->
+            <div class="intro-card">
+                <h2>🌿 滨海公园简介</h2>
+                <p class="intro-text">
+                    滨海公园坐落于城市东南海岸，是一座集<strong>一线海景、生态湿地、休闲步道与文化景观</strong>于一体的综合性城市公园。
+                </p>
+                <p class="intro-text">
+                    公园占地约18万平方米，紧邻开阔海域，拥有绵长的亲海岸线与无遮挡观海视野。园区生态环境优越，四季繁花、绿植茂密，配套设施完善。
+                </p>
+                <p class="intro-text">
+                    作为城市“海岸会客厅”，滨海公园<strong>免费开放、交通便捷</strong>，是市民日常散步、亲子游玩、看海放空的“城市后花园”。
+                </p>
+            </div>
+
+            <!-- 底部信息条（文字两端对齐均匀分布） -->
+            <div class="bottom-bar">
+                <div class="info-group">
+                    <div class="info-item"><span>🕒</span> 开放时间：08:00 - 20:00</div>
+                    <div class="info-item"><span>📞</span> 010-12345678</div>
+                    <div class="info-item"><span>📍</span> 海岸会客厅·免费开放</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

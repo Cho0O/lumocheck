@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>康脑康复精神医院 - 官网首页</title>
+    <style>
+        * {
+            border-radius: 0 !important;
+        }
+
+        :root {
+            --primary: #1a6fb5;
+            --primary-dark: #145a8f;
+            --primary-light: #e8f4fd;
+            --accent: #e8a840;
+            --bg: #f5f7fa;
+            --white: #ffffff;
+            --text: #2c3e50;
+            --text-light: #5a6c7d;
+            --border: #e0e5ec;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.10);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #eef3f9 0%, #f5f7fa 20%, #f8f9fb 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .top-accent-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #1a6fb5 0%, #3da5e8 30%, #5cc4f0 60%, #1a6fb5 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .main-container {
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header {
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+            margin-top: 5px;
+            padding: 0 32px;
+            position: sticky;
+            top: 5px;
+            z-index: 900;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 78px;
+            gap: 36px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, #3da5e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 26px;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(26, 111, 181, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            top: -8px;
+            right: -8px;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+        .logo-subtitle {
+            font-size: 11px;
+            color: var(--text-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+        .nav-menu li {
+            position: relative;
+        }
+        .nav-menu li a {
+            display: block;
+            padding: 12px 22px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 15.5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            white-space: nowrap;
+            position: relative;
+        }
+        .nav-menu li a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+        .nav-menu li a.active {
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+        .nav-menu li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+        .btn-consult {
+            padding: 10px 22px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(26, 111, 181, 0.28);
+        }
+        .btn-consult:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(26, 111, 181, 0.35);
+        }
+        .header-phone {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .page-body {
+            display: flex;
+            gap: 26px;
+            margin-top: 30px;
+            align-items: flex-start;
+        }
+
+        .main-stage {
+            flex: 1;
+            min-width: 0;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .stage-hero {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 560px;
+            background: #f0f5fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: default;
+        }
+        .stage-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .stage-info-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            padding: 16px 30px;
+            background: #fafcfd;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .stage-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+        .stage-info-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf84;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 132, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 132, 0);
+            }
+        }
+
+        .quick-cards-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 24px 28px;
+            background: #fff;
+            border-top: 1px solid var(--border);
+        }
+        .quick-card {
+            background: #fafcfd;
+            padding: 18px 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+        }
+        .quick-card:hover {
+            background: var(--primary-light);
+            border-color: rgba(26, 111, 181, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .quick-card-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .quick-card-label {
+            font-size: 13.5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            margin-top: 30px;
+            color: var(--text-light);
+            font-size: 12px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1024px) {
+            .page-body {
+                flex-direction: column;
+            }
+            .nav-menu li a {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            .quick-cards-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stage-hero {
+                aspect-ratio: 4/3;
+                max-height: 400px;
+            }
+        }
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 14px 0;
+                gap: 10px;
+                justify-content: center;
+            }
+            .nav-menu {
+                gap: 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .nav-menu li a {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            .quick-cards-row {
+                grid-template-columns: 1fr 1fr;
+                padding: 16px;
+            }
+            .stage-hero {
+                aspect-ratio: 1/1;
+                max-height: 320px;
+            }
+            .stage-info-bar {
+                gap: 16px;
+                flex-direction: column;
+            }
+            .header-actions {
+                gap: 8px;
+            }
+            .btn-consult {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            .header-phone {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-accent-bar"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo-area" title="返回首页">
+                <div class="logo-icon">十</div>
+                <div>
+                    <div class="logo-text">康脑康复精神医院</div>
+                    <div class="logo-subtitle">专注脑受损相关精神障碍诊疗与康复</div>
+                </div>
+            </a>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="active">首页</a></li>
+                <li><a href="#">科室介绍</a></li>
+                <li><a href="#">专家团队</a></li>
+                <li><a href="#">就医指南</a></li>
+                <li><a href="#">健康科普</a></li>
+            </ul>
+
+            <div class="header-actions">
+                <span class="header-phone">📞 012-3456789</span>
+                <button class="btn-consult" onclick="alert('即将打开在线咨询窗口')">💬 在线咨询</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="page-body">
+
+            <main class="main-stage">
+                <!-- 主画幅展示区，直接使用附件图片 -->
+                <div class="stage-hero" title="在线预约">
+                    <img src="医院1.png" alt="在线预约 - 立即预约">
+                </div>
+
+                <div class="stage-info-bar">
+                    <div class="stage-info-item">
+                        <span class="stage-info-dot"></span> 门诊时间：周一至周日 8:00-17:30
+                    </div>
+                    <div class="stage-info-item">
+                        <span class="stage-info-dot"></span> 急诊服务：24小时开放
+                    </div>
+                    <div class="stage-info-item">
+                        <span class="stage-info-dot"></span> 在线服务：全天候响应
+                    </div>
+                </div>
+
+                <div class="quick-cards-row">
+                    <a href="#" class="quick-card">
+                        <div class="quick-card-icon">📅</div>
+                        <div class="quick-card-label">在线挂号</div>
+                    </a>
+                    <a href="#" class="quick-card">
+                        <div class="quick-card-icon">📊</div>
+                        <div class="quick-card-label">报告查询</div>
+                    </a>
+                    <a href="#" class="quick-card">
+                        <div class="quick-card-icon">👨‍⚕️</div>
+                        <div class="quick-card-label">专家团队</div>
+                    </a>
+                    <a href="#" class="quick-card">
+                        <div class="quick-card-icon">📖</div>
+                        <div class="quick-card-label">健康科普</div>
+                    </a>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 康脑康复精神医院 | 地址：A市B区C路D号 | 咨询电话：012-3456789</p>
+        <p style="margin-top:4px;opacity:0.6;"></p>
+    </footer>
+
+</body>
+</html>

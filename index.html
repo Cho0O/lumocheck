@@ -7,16 +7,16 @@
     <style>
         :root {
             --bg: #1a1a2e;
-            --surface: #16213e;
-            --text: #e0e0e0;
-            --radius: 12px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-            --font-mono: 'Courier New', monospace;
-            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --表面: #16213e;
+            --文本: #e0e0e0;
+            --半径：12像素;
+            --阴影：0 4像素 24像素 rgba(0，0，0，0.4);
+            --字体-单间距：' Courier New'，单间距;
+            --字体-无衬线：'Segoe UI'，'PingFang SC'，'Microsoft YaHei'，无衬线;
             /* 邮箱风格变量 */
             --mail-primary: #1a5c8a;
-            --mail-primary-hover: #1e6da8;
-            --mail-primary-light: #e8f2f9;
+            --邮件主要悬停: #1e6da8;
+            --邮件主要浅色: #e8f2f9;
             --邮件背景: #f2f5f9;
             --邮件卡片背景: #ffffff;
             --邮件文本暗色: #2c2c2c;
@@ -1668,7 +1668,7 @@
         function toggleAdminLogin(){ const a=document.getElementById('lc-login-area'); const b=document.getElementById('lc-admin-login-area'); if(b.style.display==='none'){ a.style.display='none'; b.style.display='flex'; } else { b.style.display='none'; a.style.display='flex'; } }
         function lcAdminLogin(){ const u=document.getElementById('lc-admin-user').value.trim(); const p=document.getElementById('lc-admin-pass').value.trim(); if(u==='L948634@ww.com'&&p==='20240125'){ document.getElementById('lc-admin-login-area').style.display='none'; document.getElementById('lc-admin-panel').style.display='block'; } else document.getElementById('lc-admin-error').textContent='密码错误'; }
         function lcAdminLogout(){ document.getElementById('lc-admin-panel').style.display='none'; document.getElementById('lc-admin-login-area').style.display='flex'; }
-        function execAdminCmd(){ const cmd=document.getElementById('admin-cmd').value.trim(); if(cmd==='cmd && /^close\s*me$/i.test(cmd)') navigateTo('page-ending1'); else if(cmd==='sruoyemwohs') navigateTo('page-ending2'); else document.getElementById('admin-cmd-error').textContent='操作错误'; }
+        function execAdminCmd(){ const cmd=document.getElementById('admin-cmd').value.trim(); if(cmd && cmd.replace(/\s/g, '').toLowerCase() === 'closeme') navigateTo('page-ending1'); else if(cmd==='sruoyemwohs') navigateTo('page-ending2'); else document.getElementById('admin-cmd-error').textContent='操作错误'; }
         function runCheck(){
             const text=document.getElementById('lc-textarea').value.trim(); if(!text) return;
             let rate,comment,monster;

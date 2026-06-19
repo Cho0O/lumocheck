@@ -1238,7 +1238,7 @@
                 if (text) {
                     textarea.value += (textarea.value ? '\n' : '') + text;
                 }
-            } catch (err) {
+} catch (err) {
                 // 降级：提示用户手动粘贴
                 const btn = document.querySelector('.btn-paste');
                 const originalText = btn.textContent;
@@ -1279,8 +1279,8 @@
                     { type: 'received', sender: '钱老板', text: '你去LumoCheck输这个代码【sruoyemwohs】，帮我爬下他们的网站。' },
                     { type: 'sent', text: '爬网站？老板我不太懂技术啊，这是要干嘛？' },
                     { type: 'received', sender: '钱老板', text: '你不用懂。就跟你平时登录网站输入密码一样，复制粘贴，回车，完事。' },
-                    { type: 'sent', text: '这......这算不算黑客攻击啊？而且我也没有LumoCheck的账号' },
-                    { type: 'received', sender: '钱老板', text: '这就是个爬虫，别想太多，你那么多同学呢，不是都在用吗？借个账户也行' },
+                    { type: 'sent', text: '这......这算不算黑客攻击啊？而且我也没有LumoCheck的账号。' },
+                    { type: 'received', sender: '钱老板', text: '这就是个爬虫，别想太多，你那么多同学呢，不是都在用吗？借个账号也行。' },
                     { type: 'sent', text: '老板，这会不会有点......' },
                     { type: 'received', sender: '钱老板', text: '有点什么？商业竞争，兵不厌诈。他们免费抢市场的时候，可没想过我们几百号人吃饭的问题。' },
                     { type: 'sent', text: '......' },
@@ -1668,7 +1668,7 @@
         function toggleAdminLogin(){ const a=document.getElementById('lc-login-area'); const b=document.getElementById('lc-admin-login-area'); if(b.style.display==='none'){ a.style.display='none'; b.style.display='flex'; } else { b.style.display='none'; a.style.display='flex'; } }
         function lcAdminLogin(){ const u=document.getElementById('lc-admin-user').value.trim(); const p=document.getElementById('lc-admin-pass').value.trim(); if(u==='L948634@ww.com'&&p==='20240125'){ document.getElementById('lc-admin-login-area').style.display='none'; document.getElementById('lc-admin-panel').style.display='block'; } else document.getElementById('lc-admin-error').textContent='密码错误'; }
         function lcAdminLogout(){ document.getElementById('lc-admin-panel').style.display='none'; document.getElementById('lc-admin-login-area').style.display='flex'; }
-        function execAdminCmd(){ const cmd=document.getElementById('admin-cmd').value.trim(); if(cmd==='closeme') navigateTo('page-ending1'); else if(cmd==='sruoyemwohs') navigateTo('page-ending2'); else document.getElementById('admin-cmd-error').textContent='操作错误'; }
+        function execAdminCmd(){ const cmd=document.getElementById('admin-cmd').value.trim(); if(cmd==='cmd && /^close\s*me$/i.test(cmd)') navigateTo('page-ending1'); else if(cmd==='sruoyemwohs') navigateTo('page-ending2'); else document.getElementById('admin-cmd-error').textContent='操作错误'; }
         function runCheck(){
             const text=document.getElementById('lc-textarea').value.trim(); if(!text) return;
             let rate,comment,monster;
